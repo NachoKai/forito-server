@@ -15,7 +15,8 @@ export const getAllPosts = async (_req, res) => {
 			count: posts?.length,
 		});
 	} catch (error) {
-		res.status(404).json({ message: error.message });
+		res.status(400).json({ message: error.message });
+		console.error(error);
 	}
 };
 
@@ -23,26 +24,27 @@ export const getPosts = async (req, res) => {
 	const { page } = req.query;
 
 	try {
-		const LIMIT = 8;
-		const startIndex = (Number(page) - 1) * LIMIT;
+		const POSTS_LIMIT = 6;
+		const startIndex = (Number(page) - 1) * POSTS_LIMIT;
 		const total = await Post.countDocuments({});
-		const posts = await Post.find().sort({ _id: -1 }).limit(LIMIT).skip(startIndex);
+		const posts = await Post.find().sort({ _id: -1 }).limit(POSTS_LIMIT).skip(startIndex);
 		const privatePostsQuantity = posts?.filter(
 			post => post.privacy === "private"
 		)?.length;
 		const postsWithPrivate = await Post.find()
 			.sort({ _id: -1 })
-			.limit(LIMIT + privatePostsQuantity)
+			.limit(POSTS_LIMIT + privatePostsQuantity)
 			.skip(startIndex);
 
 		res.status(200).json({
 			data: postsWithPrivate,
 			currentPage: Number(page),
-			numberOfPages: Math.ceil(total / LIMIT),
+			numberOfPages: Math.ceil(total / POSTS_LIMIT),
 			count: total,
 		});
 	} catch (error) {
-		res.status(404).json({ message: error.message });
+		res.status(400).json({ message: error.message });
+		console.error(error);
 	}
 };
 
@@ -60,7 +62,8 @@ export const getPostsBySearch = async (req, res) => {
 
 		res.status(200).json({ data: posts });
 	} catch (error) {
-		res.status(404).json({ message: error.message });
+		res.status(400).json({ message: error.message });
+		console.error(error);
 	}
 };
 
@@ -72,7 +75,8 @@ export const getPost = async (req, res) => {
 
 		res.status(200).json(post);
 	} catch (error) {
-		res.status(404).json({ message: error.message });
+		res.status(400).json({ message: error.message });
+		console.error(error);
 	}
 };
 
@@ -87,9 +91,10 @@ export const createPost = async (req, res) => {
 
 	try {
 		await newPost.save();
-		res.status(201).json(newPost);
+		res.status(200).json(newPost);
 	} catch (error) {
-		res.status(409).json({ message: error.message });
+		res.status(400).json({ message: error.message });
+		console.error(error);
 	}
 };
 
@@ -97,7 +102,7 @@ export const updatePost = async (req, res) => {
 	const { id } = req.params;
 	const { title, message, creator, name, privacy, selectedFile, tags } = req.body;
 
-	if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post found.`);
+	if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).send(`No post found.`);
 
 	const updatedPost = {
 		creator,
@@ -110,19 +115,29 @@ export const updatePost = async (req, res) => {
 		_id: id,
 	};
 
-	await Post.findByIdAndUpdate(id, updatedPost, { new: true });
-	res.status(200).json(updatedPost);
+	try {
+		await Post.findByIdAndUpdate(id, updatedPost, { new: true });
+		res.status(200).json(updatedPost);
+	} catch (error) {
+		res.status(400).json({ message: error.message });
+		console.error(error);
+	}
 };
 
 export const deletePost = async (req, res) => {
 	const { id } = req.params;
 
 	if (!mongoose.Types.ObjectId.isValid(id)) {
-		return res.status(404).send(`No post found.`);
+		return res.status(400).send(`No post found.`);
 	}
 
-	await Post.findByIdAndRemove(id);
-	res.status(200).json({ message: "Post deleted successfully." });
+	try {
+		await Post.findByIdAndRemove(id);
+		res.status(200).json({ message: "Post deleted successfully." });
+	} catch (error) {
+		res.status(400).json({ message: error.message });
+		console.error(error);
+	}
 };
 
 export const likePost = async (req, res) => {
@@ -132,12 +147,12 @@ export const likePost = async (req, res) => {
 		return res.status(401).send("Unauthorized");
 	}
 	if (!mongoose.Types.ObjectId.isValid(id)) {
-		return res.status(404).send(`No post found.`);
+		return res.status(400).send(`No post found.`);
 	}
 
 	const post = await Post.findById(id);
 
-	if (!post) return res.status(404).send(`Post not found.`);
+	if (!post) return res.status(400).send(`Post not found.`);
 
 	const index = post?.likes?.findIndex(id => id === String(req.userId));
 
@@ -147,9 +162,14 @@ export const likePost = async (req, res) => {
 		post.likes = post?.likes.filter(id => id !== String(req.userId));
 	}
 
-	const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true });
+	try {
+		const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true });
 
-	res.status(200).json(updatedPost);
+		res.status(200).json(updatedPost);
+	} catch (error) {
+		res.status(400).json({ message: error.message });
+		console.error(error);
+	}
 };
 
 export const savePost = async (req, res) => {
@@ -159,12 +179,12 @@ export const savePost = async (req, res) => {
 		return res.status(401).send("Unauthorized");
 	}
 	if (!mongoose.Types.ObjectId.isValid(id)) {
-		return res.status(404).send(`No post found.`);
+		return res.status(400).send(`No post found.`);
 	}
 
 	const post = await Post.findById(id);
 
-	if (!post) return res.status(404).send(`Post not found.`);
+	if (!post) return res.status(400).send(`Post not found.`);
 	const index = post?.saves?.findIndex(id => id === String(req.userId));
 
 	if (index === -1) {
@@ -173,9 +193,14 @@ export const savePost = async (req, res) => {
 		post.saves = post?.saves?.filter(id => id !== String(req.userId));
 	}
 
-	const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true });
+	try {
+		const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true });
 
-	res.status(200).json(updatedPost);
+		res.status(200).json(updatedPost);
+	} catch (error) {
+		res.status(400).json({ message: error.message });
+		console.error(error);
+	}
 };
 
 export const commentPost = async (req, res) => {
@@ -183,12 +208,17 @@ export const commentPost = async (req, res) => {
 	const { value } = req.body;
 	const post = await Post.findById(id);
 
-	if (!post) return res.status(404).send(`Post not found.`);
+	if (!post) return res.status(400).send(`Post not found.`);
 
-	post?.comments?.push(value);
-	const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true });
+	try {
+		post?.comments?.push(value);
+		const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true });
 
-	res.status(200).json(updatedPost);
+		res.status(200).json(updatedPost);
+	} catch (error) {
+		res.status(400).json({ message: error.message });
+		console.error(error);
+	}
 };
 
 export const getPostsByCreator = async (req, res) => {
@@ -199,7 +229,8 @@ export const getPostsByCreator = async (req, res) => {
 
 		res.json({ data: posts });
 	} catch (error) {
-		res.status(404).json({ message: error.message });
+		res.status(400).json({ message: error.message });
+		console.error(error);
 	}
 };
 
@@ -211,7 +242,8 @@ export const getSavedPosts = async (req, res) => {
 
 		res.json({ data: posts });
 	} catch (error) {
-		res.status(404).json({ message: error.message });
+		res.status(400).json({ message: error.message });
+		console.error(error);
 	}
 };
 
