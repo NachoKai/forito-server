@@ -1,12 +1,13 @@
+import compression from "compression";
+import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
-import mongoose from "mongoose";
-import cors from "cors";
-import postRoutes from "./routes/posts.js";
-import userRoutes from "./routes/users.js";
-import compression from "compression";
 import mongoSanitize from "express-mongo-sanitize";
 import rateLimit from "express-rate-limit";
+import mongoose from "mongoose";
+
+import postRoutes from "./routes/posts.js";
+import userRoutes from "./routes/users.js";
 
 const isDev = process.env.NODE_ENV !== "production";
 const envFile = isDev ? `.env.${process.env.NODE_ENV}` : ".env";

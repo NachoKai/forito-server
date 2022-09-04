@@ -1,5 +1,5 @@
-import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
 
 const isDev = process.env.NODE_ENV !== "production";
 const envFile = isDev ? `.env.${process.env.NODE_ENV}` : ".env";
