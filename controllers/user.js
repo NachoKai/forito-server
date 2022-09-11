@@ -12,9 +12,9 @@ const secret = process.env.SECRET;
 const salt = process.env.SALT;
 
 export const login = async (req, res) => {
-	const { email, password } = req.body;
-
 	try {
+		const { email, password } = req.body;
+
 		const existingUser = await User.findOne({ email: { $eq: email } });
 
 		if (!existingUser) {
@@ -39,9 +39,9 @@ export const login = async (req, res) => {
 };
 
 export const signup = async (req, res) => {
-	const { email, password, confirmPassword, firstName, lastName } = req.body;
-
 	try {
+		const { email, password, confirmPassword, firstName, lastName } = req.body;
+
 		const existingUser = await User.findOne({ email: { $eq: email } });
 
 		if (existingUser) {
@@ -69,9 +69,9 @@ export const signup = async (req, res) => {
 };
 
 export const getUser = async (req, res) => {
-	const { id } = req.params;
-
 	try {
+		const { id } = req.params;
+
 		const user = await User.findById(id);
 
 		res.status(200).json(user);
