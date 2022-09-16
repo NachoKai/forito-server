@@ -15,15 +15,15 @@ export const getAllPosts = async (_req, res) => {
 			count: posts?.length,
 		});
 	} catch (error) {
-		res.status(400).json({ message: error.message });
+		res.status(400).json({ message: error?.message });
 		console.error(error);
 	}
 };
 
 export const getPosts = async (req, res) => {
-	try {
-		const { page } = req.query;
+	const { page } = req.query;
 
+	try {
 		const POSTS_LIMIT = 6;
 		const startIndex = (Number(page) - 1) * POSTS_LIMIT;
 		const total = await Post.countDocuments({});
@@ -43,14 +43,15 @@ export const getPosts = async (req, res) => {
 			count: total,
 		});
 	} catch (error) {
-		res.status(400).json({ message: error.message });
+		res.status(400).json({ message: error?.message });
 		console.error(error);
 	}
 };
 
 export const getPostsBySearch = async (req, res) => {
+	const { searchQuery, tags } = req.query;
+
 	try {
-		const { searchQuery, tags } = req.query;
 		const safeSearchQuery = escapeRegExp(searchQuery);
 
 		if (!searchQuery && !tags) return;
@@ -62,47 +63,48 @@ export const getPostsBySearch = async (req, res) => {
 
 		res.status(200).json({ data: posts });
 	} catch (error) {
-		res.status(400).json({ message: error.message });
+		res.status(400).json({ message: error?.message });
 		console.error(error);
 	}
 };
 
 export const getPost = async (req, res) => {
-	try {
-		const { id } = req.params;
+	const { id } = req.params;
 
+	try {
 		const post = await Post.findById(id);
 
 		res.status(200).json(post);
 	} catch (error) {
-		res.status(400).json({ message: error.message });
+		res.status(400).json({ message: error?.message });
 		console.error(error);
 	}
 };
 
 export const createPost = async (req, res) => {
-	try {
-		const post = req.body;
+	const post = req.body;
+	const creator = req.userId;
 
+	try {
 		const newPost = new Post({
 			...post,
-			creator: req.userId,
+			creator,
 			createdAt: new Date().toISOString(),
 		});
 
 		await newPost.save();
 		res.status(200).json(newPost);
 	} catch (error) {
-		res.status(400).json({ message: error.message });
+		res.status(400).json({ message: error?.message });
 		console.error(error);
 	}
 };
 
 export const updatePost = async (req, res) => {
-	try {
-		const { id } = req.params;
-		const { title, message, creator, name, privacy, selectedFile, tags } = req.body;
+	const { id } = req.params;
+	const { title, message, creator, name, privacy, selectedFile, tags } = req.body;
 
+	try {
 		if (!mongoose.Types.ObjectId.isValid(id))
 			return res.status(400).send(`No post found.`);
 
@@ -120,15 +122,15 @@ export const updatePost = async (req, res) => {
 		await Post.findByIdAndUpdate(id, updatedPost, { new: true });
 		res.status(200).json(updatedPost);
 	} catch (error) {
-		res.status(400).json({ message: error.message });
+		res.status(400).json({ message: error?.message });
 		console.error(error);
 	}
 };
 
 export const deletePost = async (req, res) => {
-	try {
-		const { id } = req.params;
+	const { id } = req.params;
 
+	try {
 		if (!mongoose.Types.ObjectId.isValid(id)) {
 			return res.status(400).send(`No post found.`);
 		}
@@ -136,16 +138,17 @@ export const deletePost = async (req, res) => {
 		await Post.findByIdAndRemove(id);
 		res.status(200).json({ message: "Post deleted successfully." });
 	} catch (error) {
-		res.status(400).json({ message: error.message });
+		res.status(400).json({ message: error?.message });
 		console.error(error);
 	}
 };
 
 export const likePost = async (req, res) => {
-	try {
-		const { id } = req.params;
+	const { id } = req.params;
+	const creator = req.userId;
 
-		if (!req.userId) {
+	try {
+		if (!creator) {
 			return res.status(401).send("Unauthorized");
 		}
 		if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -156,28 +159,29 @@ export const likePost = async (req, res) => {
 
 		if (!post) return res.status(400).send(`Post not found.`);
 
-		const index = post?.likes?.findIndex(id => id === String(req.userId));
+		const index = post?.likes?.findIndex(id => id === String(creator));
 
 		if (index === -1) {
-			post?.likes?.push(req.userId);
+			post?.likes?.push(creator);
 		} else {
-			post.likes = post?.likes.filter(id => id !== String(req.userId));
+			post.likes = post?.likes.filter(id => id !== String(creator));
 		}
 
 		const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true });
 
 		res.status(200).json(updatedPost);
 	} catch (error) {
-		res.status(400).json({ message: error.message });
+		res.status(400).json({ message: error?.message });
 		console.error(error);
 	}
 };
 
 export const savePost = async (req, res) => {
-	try {
-		const { id } = req.params;
+	const { id } = req.params;
+	const creator = req.userId;
 
-		if (!req.userId) {
+	try {
+		if (!creator) {
 			return res.status(401).send("Unauthorized");
 		}
 		if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -187,27 +191,28 @@ export const savePost = async (req, res) => {
 		const post = await Post.findById(id);
 
 		if (!post) return res.status(400).send(`Post not found.`);
-		const index = post?.saves?.findIndex(id => id === String(req.userId));
+		const index = post?.saves?.findIndex(id => id === String(creator));
 
 		if (index === -1) {
-			post?.saves?.push(req.userId);
+			post?.saves?.push(creator);
 		} else {
-			post.saves = post?.saves?.filter(id => id !== String(req.userId));
+			post.saves = post?.saves?.filter(id => id !== String(creator));
 		}
 
 		const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true });
 
 		res.status(200).json(updatedPost);
 	} catch (error) {
-		res.status(400).json({ message: error.message });
+		res.status(400).json({ message: error?.message });
 		console.error(error);
 	}
 };
 
 export const commentPost = async (req, res) => {
+	const { id } = req.params;
+	const { value } = req.body;
+
 	try {
-		const { id } = req.params;
-		const { value } = req.body;
 		const post = await Post.findById(id);
 
 		if (!post) return res.status(404).send(`Post not found.`);
@@ -217,33 +222,33 @@ export const commentPost = async (req, res) => {
 
 		res.status(200).json(updatedPost);
 	} catch (error) {
-		res.status(400).json({ message: error.message });
+		res.status(400).json({ message: error?.message });
 		console.error(error);
 	}
 };
 
 export const getPostsByCreator = async (req, res) => {
-	try {
-		const { id } = req.query;
+	const { id } = req.query;
 
+	try {
 		const posts = await Post.find({ creator: { $eq: id } });
 
 		res.json({ data: posts });
 	} catch (error) {
-		res.status(400).json({ message: error.message });
+		res.status(400).json({ message: error?.message });
 		console.error(error);
 	}
 };
 
 export const getSavedPosts = async (req, res) => {
-	try {
-		const { id } = req.query;
+	const { id } = req.query;
 
+	try {
 		const posts = await Post.find({ saves: { $eq: id } });
 
 		res.json({ data: posts });
 	} catch (error) {
-		res.status(400).json({ message: error.message });
+		res.status(400).json({ message: error?.message });
 		console.error(error);
 	}
 };
