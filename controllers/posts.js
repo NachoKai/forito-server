@@ -208,7 +208,7 @@ export const savePost = async (req, res) => {
 	}
 };
 
-export const commentPost = async (req, res) => {
+export const addComment = async (req, res) => {
 	const { id } = req.params;
 	const { value } = req.body;
 
@@ -218,6 +218,25 @@ export const commentPost = async (req, res) => {
 		if (!post) return res.status(404).send(`Post not found.`);
 
 		post?.comments?.push(value);
+		const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true });
+
+		res.status(200).json(updatedPost);
+	} catch (error) {
+		res.status(400).json({ message: error?.message });
+		console.error(error);
+	}
+};
+
+export const deleteComment = async (req, res) => {
+	const { id, commentId } = req.params;
+
+	try {
+		const post = await Post.findById(id);
+
+		if (!post) return res.status(404).send(`Post not found.`);
+
+		post.comments = post?.comments?.filter(comment => comment.commentId !== commentId);
+
 		const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true });
 
 		res.status(200).json(updatedPost);
