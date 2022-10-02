@@ -72,7 +72,11 @@ export const getPost = async (req, res) => {
 	const { id } = req.params;
 
 	try {
-		const post = await Post.findById(id);
+		let post;
+
+		if (id.match(/^[0-9a-fA-F]{24}$/)) {
+			post = await Post.findById(id);
+		}
 
 		res.status(200).json(post);
 	} catch (error) {
@@ -155,7 +159,11 @@ export const likePost = async (req, res) => {
 			return res.status(400).send(`No post found.`);
 		}
 
-		const post = await Post.findById(id);
+		let post;
+
+		if (id.match(/^[0-9a-fA-F]{24}$/)) {
+			post = await Post.findById(id);
+		}
 
 		if (!post) return res.status(400).send(`Post not found.`);
 
@@ -188,7 +196,11 @@ export const savePost = async (req, res) => {
 			return res.status(400).send(`No post found.`);
 		}
 
-		const post = await Post.findById(id);
+		let post;
+
+		if (id.match(/^[0-9a-fA-F]{24}$/)) {
+			post = await Post.findById(id);
+		}
 
 		if (!post) return res.status(400).send(`Post not found.`);
 		const index = post?.saves?.findIndex(id => id === String(creator));
@@ -213,7 +225,11 @@ export const addComment = async (req, res) => {
 	const { value } = req.body;
 
 	try {
-		const post = await Post.findById(id);
+		let post;
+
+		if (id.match(/^[0-9a-fA-F]{24}$/)) {
+			post = await Post.findById(id);
+		}
 
 		if (!post) return res.status(404).send(`Post not found.`);
 
@@ -231,7 +247,11 @@ export const deleteComment = async (req, res) => {
 	const { id, commentId } = req.params;
 
 	try {
-		const post = await Post.findById(id);
+		let post;
+
+		if (id.match(/^[0-9a-fA-F]{24}$/)) {
+			post = await Post.findById(id);
+		}
 
 		if (!post) return res.status(404).send(`Post not found.`);
 
