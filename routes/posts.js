@@ -1,8 +1,9 @@
 import express from "express";
 
 import {
-	commentPost,
+	addComment,
 	createPost,
+	deleteComment,
 	deletePost,
 	getAllPosts,
 	getPost,
@@ -29,6 +30,7 @@ router.patch("/:id", auth, updatePost);
 router.delete("/:id", auth, deletePost);
 router.patch("/:id/likePost", auth, likePost);
 router.patch("/:id/savePost", auth, savePost);
-router.post("/:id/commentPost", auth, commentPost);
+router.post("/:id/addComment", auth, addComment);
+router.delete("/:id/:commentId", auth, deleteComment);
 
 export default router;
