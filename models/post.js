@@ -24,6 +24,7 @@ const postSchema = mongoose.Schema({
 		type: Date,
 		default: new Date(),
 	},
+	alt: { type: String },
 });
 
 const Post = mongoose.model("Post", postSchema);

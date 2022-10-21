@@ -106,7 +106,7 @@ export const createPost = async (req, res) => {
 
 export const updatePost = async (req, res) => {
 	const { id } = req.params;
-	const { title, message, creator, name, privacy, selectedFile, tags } = req.body;
+	const { title, message, creator, name, privacy, selectedFile, tags, alt } = req.body;
 
 	try {
 		if (!mongoose.Types.ObjectId.isValid(id))
@@ -120,6 +120,7 @@ export const updatePost = async (req, res) => {
 			message,
 			tags,
 			selectedFile,
+			alt,
 			_id: id,
 		};
 
