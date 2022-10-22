@@ -31,9 +31,9 @@ export const login = async (req, res) => {
 		});
 
 		res.status(200).json({ result: existingUser, token });
-	} catch (error) {
+	} catch (err) {
 		res.status(400).json({ message: "Something went wrong." });
-		console.error(error);
+		console.error(err);
 	}
 };
 
@@ -60,9 +60,9 @@ export const signup = async (req, res) => {
 		});
 
 		res.status(200).json({ result, token });
-	} catch (error) {
+	} catch (err) {
 		res.status(400).json({ message: "Something went wrong." });
-		console.error(error);
+		console.error(err);
 	}
 };
 
@@ -76,8 +76,8 @@ export const getUser = async (req, res) => {
 		}
 
 		res.status(200).json(user);
-	} catch (error) {
-		res.status(400).json({ message: error.message });
-		console.error(error);
+	} catch (err) {
+		res.status(400).json({ message: err?.message });
+		console.error(err);
 	}
 };
