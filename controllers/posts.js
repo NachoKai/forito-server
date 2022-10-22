@@ -14,9 +14,9 @@ export const getAllPosts = async (_req, res) => {
 			data: posts,
 			count: posts?.length,
 		});
-	} catch (error) {
-		res.status(400).json({ message: error?.message });
-		console.error(error);
+	} catch (err) {
+		res.status(400).json({ message: err?.message });
+		console.error(err);
 	}
 };
 
@@ -42,9 +42,9 @@ export const getPosts = async (req, res) => {
 			numberOfPages: Math.ceil(total / POSTS_LIMIT),
 			count: total,
 		});
-	} catch (error) {
-		res.status(400).json({ message: error?.message });
-		console.error(error);
+	} catch (err) {
+		res.status(400).json({ message: err?.message });
+		console.error(err);
 	}
 };
 
@@ -62,9 +62,9 @@ export const getPostsBySearch = async (req, res) => {
 		});
 
 		res.status(200).json({ data: posts });
-	} catch (error) {
-		res.status(400).json({ message: error?.message });
-		console.error(error);
+	} catch (err) {
+		res.status(400).json({ message: err?.message });
+		console.error(err);
 	}
 };
 
@@ -79,9 +79,9 @@ export const getPost = async (req, res) => {
 		}
 
 		res.status(200).json(post);
-	} catch (error) {
-		res.status(400).json({ message: error?.message });
-		console.error(error);
+	} catch (err) {
+		res.status(400).json({ message: err?.message });
+		console.error(err);
 	}
 };
 
@@ -98,9 +98,9 @@ export const createPost = async (req, res) => {
 
 		await newPost.save();
 		res.status(200).json(newPost);
-	} catch (error) {
-		res.status(400).json({ message: error?.message });
-		console.error(error);
+	} catch (err) {
+		res.status(400).json({ message: err?.message });
+		console.error(err);
 	}
 };
 
@@ -126,9 +126,9 @@ export const updatePost = async (req, res) => {
 
 		await Post.findByIdAndUpdate(id, updatedPost, { new: true });
 		res.status(200).json(updatedPost);
-	} catch (error) {
-		res.status(400).json({ message: error?.message });
-		console.error(error);
+	} catch (err) {
+		res.status(400).json({ message: err?.message });
+		console.error(err);
 	}
 };
 
@@ -142,9 +142,9 @@ export const deletePost = async (req, res) => {
 
 		await Post.findByIdAndRemove(id);
 		res.status(200).json({ message: "Post deleted successfully." });
-	} catch (error) {
-		res.status(400).json({ message: error?.message });
-		console.error(error);
+	} catch (err) {
+		res.status(400).json({ message: err?.message });
+		console.error(err);
 	}
 };
 
@@ -179,9 +179,9 @@ export const likePost = async (req, res) => {
 		const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true });
 
 		res.status(200).json(updatedPost);
-	} catch (error) {
-		res.status(400).json({ message: error?.message });
-		console.error(error);
+	} catch (err) {
+		res.status(400).json({ message: err?.message });
+		console.error(err);
 	}
 };
 
@@ -215,9 +215,9 @@ export const savePost = async (req, res) => {
 		const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true });
 
 		res.status(200).json(updatedPost);
-	} catch (error) {
-		res.status(400).json({ message: error?.message });
-		console.error(error);
+	} catch (err) {
+		res.status(400).json({ message: err?.message });
+		console.error(err);
 	}
 };
 
@@ -238,9 +238,9 @@ export const addComment = async (req, res) => {
 		const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true });
 
 		res.status(200).json(updatedPost);
-	} catch (error) {
-		res.status(400).json({ message: error?.message });
-		console.error(error);
+	} catch (err) {
+		res.status(400).json({ message: err?.message });
+		console.error(err);
 	}
 };
 
@@ -261,9 +261,9 @@ export const deleteComment = async (req, res) => {
 		const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true });
 
 		res.status(200).json(updatedPost);
-	} catch (error) {
-		res.status(400).json({ message: error?.message });
-		console.error(error);
+	} catch (err) {
+		res.status(400).json({ message: err?.message });
+		console.error(err);
 	}
 };
 
@@ -274,9 +274,9 @@ export const getPostsByCreator = async (req, res) => {
 		const posts = await Post.find({ creator: { $eq: id } });
 
 		res.json({ data: posts });
-	} catch (error) {
-		res.status(400).json({ message: error?.message });
-		console.error(error);
+	} catch (err) {
+		res.status(400).json({ message: err?.message });
+		console.error(err);
 	}
 };
 
@@ -287,9 +287,9 @@ export const getSavedPosts = async (req, res) => {
 		const posts = await Post.find({ saves: { $eq: id } });
 
 		res.json({ data: posts });
-	} catch (error) {
-		res.status(400).json({ message: error?.message });
-		console.error(error);
+	} catch (err) {
+		res.status(400).json({ message: err?.message });
+		console.error(err);
 	}
 };
 
