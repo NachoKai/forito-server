@@ -122,6 +122,7 @@ export const updatePost = async (req, res) => {
 			selectedFile,
 			alt,
 			_id: id,
+			updatedAt: new Date().toISOString(),
 		};
 
 		await Post.findByIdAndUpdate(id, updatedPost, { new: true });
