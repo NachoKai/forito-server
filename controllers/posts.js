@@ -106,22 +106,39 @@ export const createPost = async (req, res) => {
 
 export const updatePost = async (req, res) => {
 	const { id } = req.params;
-	const { title, message, creator, name, privacy, selectedFile, tags, alt } = req.body;
+	const {
+		title,
+		message,
+		creator,
+		name,
+		privacy,
+		selectedFile,
+		tags,
+		alt,
+		likes,
+		saves,
+		comments,
+		createdAt,
+	} = req.body;
 
 	try {
 		if (!mongoose.Types.ObjectId.isValid(id))
 			return res.status(400).send(`No post found.`);
 
 		const updatedPost = {
-			creator,
+			_id: id,
 			name,
-			privacy,
+			creator,
 			title,
 			message,
 			tags,
 			selectedFile,
 			alt,
-			_id: id,
+			privacy,
+			likes,
+			saves,
+			comments,
+			createdAt,
 			updatedAt: new Date().toISOString(),
 		};
 
