@@ -122,18 +122,36 @@ export const updatePost = async (req, res) => {
 	} = req.body;
 
 	try {
-		if (!mongoose.Types.ObjectId.isValid(id))
+		if (!mongoose.Types.ObjectId.isValid(id)) {
 			return res.status(400).send(`No post found.`);
+		}
+
+		if (
+			typeof title !== "string" ||
+			typeof message !== "string" ||
+			typeof creator !== "string" ||
+			typeof name !== "string" ||
+			typeof privacy !== "string" ||
+			!Array.isArray(tags) ||
+			typeof alt !== "string" ||
+			!Array.isArray(likes) ||
+			!Array.isArray(saves) ||
+			!Array.isArray(comments) ||
+			typeof createdAt !== "string" ||
+			typeof selectedFile !== "object"
+		) {
+			return res.status(400).send(`Invalid post data.`);
+		}
 
 		const updatedPost = {
 			_id: id,
-			name,
-			creator,
-			title,
-			message,
-			tags,
+			name: name.trim(),
+			creator: creator.trim(),
+			title: title.trim(),
+			message: message.trim(),
+			tags: tags.map(tag => tag.trim()),
 			selectedFile,
-			alt,
+			alt: alt.trim(),
 			privacy,
 			likes,
 			saves,
