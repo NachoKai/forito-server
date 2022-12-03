@@ -88,12 +88,15 @@ export const setBirthday = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const { birthday } = req.body;
+		const updatedUser = await User.findOneAndUpdate(
+			{ _id: { $eq: id } },
+			{ birthday },
+			{ new: true }
+		);
 
-		if (!mongoose.Types.ObjectId.isValid(id)) {
+		if (!mongoose.Types.ObjectId.isValid(id) || !updatedUser) {
 			return res.status(404).json({ message: "User doesn't exist." });
 		}
-
-		const updatedUser = await User.findByIdAndUpdate(id, { birthday }, { new: true });
 
 		res.status(200).json(updatedUser);
 	} catch (err) {
@@ -106,13 +109,15 @@ export const setName = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const { firstName, lastName } = req.body;
+		const updatedUser = await User.findOneAndUpdate(
+			{ _id: { $eq: id } },
+			{ name: lastName ? `${firstName} ${lastName}` : firstName },
+			{ new: true }
+		);
 
-		if (!mongoose.Types.ObjectId.isValid(id)) {
+		if (!mongoose.Types.ObjectId.isValid(id) || !updatedUser) {
 			return res.status(404).json({ message: "User doesn't exist." });
 		}
-
-		const name = lastName ? `${firstName} ${lastName}` : firstName;
-		const updatedUser = await User.findByIdAndUpdate(id, { name }, { new: true });
 
 		res.status(200).json(updatedUser);
 	} catch (err) {
@@ -131,11 +136,15 @@ export const setEmail = async (req, res) => {
 			return res.status(401).json({ message: "User already exists." });
 		}
 
-		if (!mongoose.Types.ObjectId.isValid(id)) {
+		const updatedUser = await User.findOneAndUpdate(
+			{ _id: { $eq: id } },
+			{ email },
+			{ new: true }
+		);
+
+		if (!mongoose.Types.ObjectId.isValid(id) || !updatedUser) {
 			return res.status(404).json({ message: "User doesn't exist." });
 		}
-
-		const updatedUser = await User.findByIdAndUpdate(id, { email }, { new: true });
 
 		res.status(200).json(updatedUser);
 	} catch (err) {
