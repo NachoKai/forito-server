@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 
 import User from "../models/user.js";
 
@@ -54,6 +55,7 @@ export const signup = async (req, res) => {
 			email,
 			password: hashedPassword,
 			name: lastName ? `${firstName} ${lastName}` : firstName,
+			birthday: null,
 		});
 		const token = jwt.sign({ email: result.email, id: result._id }, secret, {
 			expiresIn: "12h",
@@ -76,6 +78,43 @@ export const getUser = async (req, res) => {
 		}
 
 		res.status(200).json(user);
+	} catch (err) {
+		res.status(400).json({ message: err?.message });
+		console.error(err);
+	}
+};
+
+export const setBirthday = async (req, res) => {
+	try {
+		const { id } = req.params;
+		const { birthday } = req.body;
+
+		if (!mongoose.Types.ObjectId.isValid(id)) {
+			return res.status(404).json({ message: "User doesn't exist." });
+		}
+
+		const updatedUser = await User.findByIdAndUpdate(id, { birthday }, { new: true });
+
+		res.status(200).json(updatedUser);
+	} catch (err) {
+		res.status(400).json({ message: err?.message });
+		console.error(err);
+	}
+};
+
+export const setName = async (req, res) => {
+	try {
+		const { id } = req.params;
+		const { firstName, lastName } = req.body;
+
+		if (!mongoose.Types.ObjectId.isValid(id)) {
+			return res.status(404).json({ message: "User doesn't exist." });
+		}
+
+		const name = lastName ? `${firstName} ${lastName}` : firstName;
+		const updatedUser = await User.findByIdAndUpdate(id, { name }, { new: true });
+
+		res.status(200).json(updatedUser);
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
