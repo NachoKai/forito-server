@@ -120,3 +120,26 @@ export const setName = async (req, res) => {
 		console.error(err);
 	}
 };
+
+export const setEmail = async (req, res) => {
+	try {
+		const { id } = req.params;
+		const { email } = req.body;
+		const existingUser = await User.findOne({ email: { $eq: email } });
+
+		if (existingUser) {
+			return res.status(401).json({ message: "User already exists." });
+		}
+
+		if (!mongoose.Types.ObjectId.isValid(id)) {
+			return res.status(404).json({ message: "User doesn't exist." });
+		}
+
+		const updatedUser = await User.findByIdAndUpdate(id, { email }, { new: true });
+
+		res.status(200).json(updatedUser);
+	} catch (err) {
+		res.status(400).json({ message: err?.message });
+		console.error(err);
+	}
+};
