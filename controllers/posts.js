@@ -309,7 +309,7 @@ export const getPostsByCreator = async (req, res) => {
 	try {
 		const posts = await Post.find({ creator: { $eq: id } });
 
-		res.json({ data: posts });
+		res.json({ data: posts, count: posts?.length });
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
