@@ -52,11 +52,10 @@ export const getPostsBySearch = async (req, res) => {
 	const { searchQuery, tags } = req.query;
 
 	try {
-		const safeSearchQuery = escapeRegExp(searchQuery);
-
 		if (!searchQuery && !tags) return;
 
-		const title = new RegExp(safeSearchQuery, "i");
+		const safeSearchQuery = escapeRegExp(searchQuery);
+		const title = searchQuery ? new RegExp(safeSearchQuery, "i") : null;
 		const posts = await Post.find({
 			$or: [{ title }, { tags: { $in: tags.split(",") } }],
 		});
