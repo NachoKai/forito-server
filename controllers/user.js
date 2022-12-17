@@ -152,3 +152,39 @@ export const setEmail = async (req, res) => {
 		console.error(err);
 	}
 };
+
+export const getNotifications = async (req, res) => {
+	try {
+		const { id } = req.params;
+		const user = await User.findById(id);
+
+		if (!mongoose.Types.ObjectId.isValid(id) || !user) {
+			return res.status(404).json({ message: "User doesn't exist." });
+		}
+
+		res.status(200).json(user.notifications);
+	} catch (err) {
+		res.status(400).json({ message: err?.message });
+		console.error(err);
+	}
+};
+
+export const setNotification = async (req, res) => {
+	try {
+		const { id } = req.params;
+		const { notification } = req.body;
+		const user = await User.findById(id);
+
+		if (!mongoose.Types.ObjectId.isValid(id) || !user) {
+			return res.status(404).json({ message: "User doesn't exist." });
+		}
+
+		user.notifications.push(notification);
+		const updatedUser = await user.save();
+
+		res.status(200).json(updatedUser);
+	} catch (err) {
+		res.status(400).json({ message: err?.message });
+		console.error(err);
+	}
+};
