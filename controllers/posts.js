@@ -39,7 +39,7 @@ export const getPosts = async (req, res) => {
 		res.status(200).json({
 			data: postsWithPrivate,
 			currentPage: Number(page),
-			numberOfPages: Math.ceil(total / POSTS_LIMIT),
+			numberOfPages: !isNaN(total) && POSTS_LIMIT !== 0 && Math.ceil(total / POSTS_LIMIT),
 			count: total,
 		});
 	} catch (err) {
