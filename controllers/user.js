@@ -169,7 +169,7 @@ export const getNotifications = async (req, res) => {
 	}
 };
 
-export const setNotification = async (req, res) => {
+export const addNotification = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const { notification } = req.body;
@@ -180,6 +180,32 @@ export const setNotification = async (req, res) => {
 		}
 
 		user.notifications.push(notification);
+		const updatedUser = await user.save();
+
+		res.status(200).json(updatedUser);
+	} catch (err) {
+		res.status(400).json({ message: err?.message });
+		console.error(err);
+	}
+};
+
+export const updateNotifications = async (req, res) => {
+	try {
+		const { id } = req.params;
+		const { notifications } = req.body;
+		const user = await User.findById(id);
+
+		if (!mongoose.Types.ObjectId.isValid(id) || !user) {
+			return res.status(404).json({ message: "User doesn't exist." });
+		}
+
+		const updatedNotifications = user.notifications.map(notification => {
+			const updatedNotification = notifications.find(n => n._id === notification._id);
+
+			return updatedNotification ? updatedNotification : notification;
+		});
+
+		user.notifications = updatedNotifications;
 		const updatedUser = await user.save();
 
 		res.status(200).json(updatedUser);
