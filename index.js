@@ -34,6 +34,7 @@ app.use(express.urlencoded({ limit: "30mb", extended: true }));
 
 const connectDB = async () => {
 	try {
+		mongoose.set("strictQuery", false);
 		const conn = await mongoose.connect(CONNECTION_URL);
 
 		console.info(`MongoDB Connected: ${conn.connection.host}`);
