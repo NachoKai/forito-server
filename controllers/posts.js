@@ -1,8 +1,8 @@
 import express from "express";
-import escapeRegExp from "lodash";
 import mongoose from "mongoose";
 
 import Post from "../models/post.js";
+import { escapeRegExp } from "../utils/escapeRegExp.js";
 
 const router = express.Router();
 
