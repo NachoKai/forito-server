@@ -62,6 +62,10 @@ To run this project, you will need to add the following environment variables to
 
 Node, Express, MongoDB, Mongoose
 
+## Recent Activity
+
+<!--START_SECTION:activity-->
+
 
 ## Feedback
 
