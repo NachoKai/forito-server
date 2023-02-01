@@ -1,7 +1,7 @@
 
 # Forito ✨
 
-Forito is a place where you can spit out your ideas ✍️ 
+Forito is a place where you can spit out your ideas ✍️
 
 
 ## Link
