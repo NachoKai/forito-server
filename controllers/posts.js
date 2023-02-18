@@ -8,7 +8,7 @@ const router = express.Router();
 
 export const getAllPosts = async (_req, res) => {
 	try {
-		const posts = await Post.find().sort({ _id: -1 });
+		const posts = await Post.find().sort({ _id: -1 }).lean();
 
 		res.status(200).json({
 			data: posts,
@@ -27,14 +27,19 @@ export const getPosts = async (req, res) => {
 		const POSTS_LIMIT = 6;
 		const startIndex = (Number(page) - 1) * POSTS_LIMIT;
 		const total = await Post.countDocuments({});
-		const posts = await Post.find().sort({ _id: -1 }).limit(POSTS_LIMIT).skip(startIndex);
+		const posts = await Post.find()
+			.sort({ _id: -1 })
+			.limit(POSTS_LIMIT)
+			.skip(startIndex)
+			.lean();
 		const privatePostsQuantity = posts?.filter(
 			post => post.privacy === "private"
 		)?.length;
 		const postsWithPrivate = await Post.find()
 			.sort({ _id: -1 })
 			.limit(POSTS_LIMIT + privatePostsQuantity)
-			.skip(startIndex);
+			.skip(startIndex)
+			.lean();
 
 		res.status(200).json({
 			data: postsWithPrivate,
@@ -58,7 +63,7 @@ export const getPostsBySearch = async (req, res) => {
 		const title = searchQuery ? new RegExp(safeSearchQuery, "i") : null;
 		const posts = await Post.find({
 			$or: [{ title }, { tags: { $in: tags.split(",") } }],
-		});
+		}).lean();
 
 		res.status(200).json({ data: posts });
 	} catch (err) {
@@ -74,7 +79,7 @@ export const getPost = async (req, res) => {
 		let post;
 
 		if (id.match(/^[0-9a-fA-F]{24}$/)) {
-			post = await Post.findById(id);
+			post = await Post.findById(id).lean();
 		}
 
 		res.status(200).json(post);
@@ -159,7 +164,7 @@ export const updatePost = async (req, res) => {
 			updatedAt: new Date().toISOString(),
 		};
 
-		await Post.findByIdAndUpdate(id, updatedPost, { new: true });
+		await Post.findByIdAndUpdate(id, updatedPost, { new: true }).lean();
 		res.status(200).json(updatedPost);
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
@@ -175,7 +180,7 @@ export const deletePost = async (req, res) => {
 			return res.status(400).send(`No post found.`);
 		}
 
-		await Post.findByIdAndRemove(id);
+		await Post.findByIdAndRemove(id).lean();
 		res.status(200).json({ message: "Post deleted successfully." });
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
@@ -198,7 +203,7 @@ export const likePost = async (req, res) => {
 		let post;
 
 		if (id.match(/^[0-9a-fA-F]{24}$/)) {
-			post = await Post.findById(id);
+			post = await Post.findById(id).lean();
 		}
 
 		if (!post) return res.status(400).send(`Post not found.`);
@@ -211,7 +216,7 @@ export const likePost = async (req, res) => {
 			post.likes = post?.likes.filter(id => id !== String(creator));
 		}
 
-		const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true });
+		const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true }).lean();
 
 		res.status(200).json(updatedPost);
 	} catch (err) {
@@ -235,7 +240,7 @@ export const savePost = async (req, res) => {
 		let post;
 
 		if (id.match(/^[0-9a-fA-F]{24}$/)) {
-			post = await Post.findById(id);
+			post = await Post.findById(id).lean();
 		}
 
 		if (!post) return res.status(400).send(`Post not found.`);
@@ -247,7 +252,7 @@ export const savePost = async (req, res) => {
 			post.saves = post?.saves?.filter(id => id !== String(creator));
 		}
 
-		const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true });
+		const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true }).lean();
 
 		res.status(200).json(updatedPost);
 	} catch (err) {
@@ -264,13 +269,13 @@ export const addComment = async (req, res) => {
 		let post;
 
 		if (id.match(/^[0-9a-fA-F]{24}$/)) {
-			post = await Post.findById(id);
+			post = await Post.findById(id).lean();
 		}
 
 		if (!post) return res.status(404).send(`Post not found.`);
 
 		post?.comments?.push(value);
-		const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true });
+		const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true }).lean();
 
 		res.status(200).json(updatedPost);
 	} catch (err) {
@@ -286,14 +291,14 @@ export const deleteComment = async (req, res) => {
 		let post;
 
 		if (id.match(/^[0-9a-fA-F]{24}$/)) {
-			post = await Post.findById(id);
+			post = await Post.findById(id).lean();
 		}
 
 		if (!post) return res.status(404).send(`Post not found.`);
 
 		post.comments = post?.comments?.filter(comment => comment.commentId !== commentId);
 
-		const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true });
+		const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true }).lean();
 
 		res.status(200).json(updatedPost);
 	} catch (err) {
@@ -306,7 +311,7 @@ export const getPostsByCreator = async (req, res) => {
 	const { id } = req.query;
 
 	try {
-		const posts = await Post.find({ creator: { $eq: id } });
+		const posts = await Post.find({ creator: { $eq: id } }).lean();
 
 		res.json({ data: posts, count: posts?.length });
 	} catch (err) {
@@ -319,7 +324,7 @@ export const getSavedPosts = async (req, res) => {
 	const { id } = req.query;
 
 	try {
-		const posts = await Post.find({ saves: { $eq: id } });
+		const posts = await Post.find({ saves: { $eq: id } }).lean();
 
 		res.json({ data: posts, count: posts?.length });
 	} catch (err) {

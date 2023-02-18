@@ -15,7 +15,7 @@ const salt = process.env.SALT;
 export const login = async (req, res) => {
 	try {
 		const { email, password } = req.body;
-		const existingUser = await User.findOne({ email: { $eq: email } });
+		const existingUser = await User.findOne({ email: { $eq: email } }).lean();
 
 		if (!existingUser) {
 			return res.status(404).json({ message: "User doesn't exist." });
@@ -41,7 +41,7 @@ export const login = async (req, res) => {
 export const signup = async (req, res) => {
 	try {
 		const { email, password, confirmPassword, firstName, lastName } = req.body;
-		const existingUser = await User.findOne({ email: { $eq: email } });
+		const existingUser = await User.findOne({ email: { $eq: email } }).lean();
 
 		if (existingUser) {
 			return res.status(401).json({ message: "User already exists." });
@@ -74,7 +74,7 @@ export const getUser = async (req, res) => {
 		let user;
 
 		if (id.match(/^[0-9a-fA-F]{24}$/)) {
-			user = await User.findById(id);
+			user = await User.findById(id).lean();
 		}
 
 		res.status(200).json(user);
@@ -130,7 +130,7 @@ export const setEmail = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const { email } = req.body;
-		const existingUser = await User.findOne({ email: { $eq: email } });
+		const existingUser = await User.findOne({ email: { $eq: email } }).lean();
 
 		if (existingUser) {
 			return res.status(401).json({ message: "User already exists." });
@@ -156,7 +156,7 @@ export const setEmail = async (req, res) => {
 export const getNotifications = async (req, res) => {
 	try {
 		const { id } = req.params;
-		const user = await User.findById(id);
+		const user = await User.findById(id).lean();
 
 		if (!mongoose.Types.ObjectId.isValid(id) || !user) {
 			return res.status(404).json({ message: "User doesn't exist." });
@@ -173,7 +173,7 @@ export const addNotification = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const { notification } = req.body;
-		const user = await User.findById(id);
+		const user = await User.findById(id).lean();
 
 		if (!mongoose.Types.ObjectId.isValid(id) || !user) {
 			return res.status(404).json({ message: "User doesn't exist." });
@@ -193,7 +193,7 @@ export const updateNotifications = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const { notifications } = req.body;
-		const user = await User.findById(id);
+		const user = await User.findById(id).lean();
 
 		if (!mongoose.Types.ObjectId.isValid(id) || !user) {
 			return res.status(404).json({ message: "User doesn't exist." });
