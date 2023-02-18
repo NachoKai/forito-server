@@ -4,12 +4,13 @@ import dotenv from "dotenv";
 import express from "express";
 import mongoSanitize from "express-mongo-sanitize";
 import rateLimit from "express-rate-limit";
+import helmet from "helmet";
 import mongoose from "mongoose";
 
 import postRoutes from "./routes/posts.js";
 import userRoutes from "./routes/users.js";
 
-const isDev = process.env.NODE_ENV !== "production";
+const isDev = process.env.NODE_ENV === "development";
 const envFile = isDev ? `.env.${process.env.NODE_ENV}` : ".env";
 const limiter =
 	!isDev &&
@@ -20,17 +21,21 @@ const limiter =
 		legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 	});
 
+dotenv.config({ path: envFile });
+const PORT = process.env.PORT || 5000;
+const CONNECTION_URL = process.env.MONGODB_URI || "mongodb://localhost:27017/forito";
 const app = express();
 
 app.get("env");
-
-dotenv.config({ path: envFile });
-
-const PORT = process.env.PORT || 5000;
-const CONNECTION_URL = process.env.MONGODB_URI || "mongodb://localhost:27017/forito";
-
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ limit: "30mb", extended: true }));
+app.use(helmet());
+app.use(compression());
+app.use(mongoSanitize());
+app.use(cors());
+app.use("/posts", postRoutes);
+app.use("/user", userRoutes);
+if (!isDev) app.use(limiter);
 
 const connectDB = async () => {
 	try {
@@ -43,16 +48,6 @@ const connectDB = async () => {
 		process.exit(1);
 	}
 };
-
-if (!isDev) {
-	app.use(limiter);
-}
-
-app.use(compression());
-app.use(mongoSanitize());
-app.use(cors());
-app.use("/posts", postRoutes);
-app.use("/user", userRoutes);
 
 connectDB()
 	.then(() => {
