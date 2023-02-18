@@ -43,18 +43,34 @@ const connectDB = async () => {
 		const conn = await mongoose.connect(CONNECTION_URL);
 
 		console.info(`MongoDB Connected: ${conn.connection.host}`);
-	} catch (error) {
-		console.error(error);
+	} catch (err) {
+		console.error(err);
 		process.exit(1);
 	}
 };
 
-connectDB()
-	.then(() => {
-		app.listen(PORT, () => {
+const closeDB = () => {
+	try {
+		mongoose.connection.close(() => {
+			console.info("MongoDB connection closed");
+			process.exit(0);
+		});
+	} catch (err) {
+		console.error(err);
+	}
+};
+
+const startServer = async () => {
+	try {
+		await connectDB();
+		const server = app.listen(PORT, () => {
 			console.info(`Forito listening on port ${PORT}`);
 		});
-	})
-	.catch(err => {
+
+		server.on("close", closeDB);
+	} catch (err) {
 		console.error(err);
-	});
+	}
+};
+
+startServer();
