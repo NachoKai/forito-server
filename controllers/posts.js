@@ -17,6 +17,7 @@ export const getAllPosts = async (_req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
+		throw err;
 	}
 };
 
@@ -50,6 +51,7 @@ export const getPosts = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
+		throw err;
 	}
 };
 
@@ -69,6 +71,7 @@ export const getPostsBySearch = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
+		throw err;
 	}
 };
 
@@ -86,6 +89,7 @@ export const getPost = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
+		throw err;
 	}
 };
 
@@ -105,6 +109,7 @@ export const createPost = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
+		throw err;
 	}
 };
 
@@ -169,6 +174,7 @@ export const updatePost = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
+		throw err;
 	}
 };
 
@@ -185,6 +191,7 @@ export const deletePost = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
+		throw err;
 	}
 };
 
@@ -222,6 +229,7 @@ export const likePost = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
+		throw err;
 	}
 };
 
@@ -258,6 +266,7 @@ export const savePost = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
+		throw err;
 	}
 };
 
@@ -281,6 +290,7 @@ export const addComment = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
+		throw err;
 	}
 };
 
@@ -304,6 +314,7 @@ export const deleteComment = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
+		throw err;
 	}
 };
 
@@ -317,6 +328,7 @@ export const getPostsByCreator = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
+		throw err;
 	}
 };
 
@@ -330,6 +342,7 @@ export const getSavedPosts = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
+		throw err;
 	}
 };
 

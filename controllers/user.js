@@ -35,6 +35,7 @@ export const login = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: "Something went wrong." });
 		console.error(err);
+		throw err;
 	}
 };
 
@@ -65,6 +66,7 @@ export const signup = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: "Something went wrong." });
 		console.error(err);
+		throw err;
 	}
 };
 
@@ -81,6 +83,7 @@ export const getUser = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
+		throw err;
 	}
 };
 
@@ -102,6 +105,7 @@ export const setBirthday = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
+		throw err;
 	}
 };
 
@@ -123,6 +127,7 @@ export const setName = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
+		throw err;
 	}
 };
 
@@ -150,6 +155,7 @@ export const setEmail = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
+		throw err;
 	}
 };
 
@@ -166,6 +172,7 @@ export const getNotifications = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
+		throw err;
 	}
 };
 
@@ -186,6 +193,7 @@ export const addNotification = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
+		throw err;
 	}
 };
 
@@ -212,5 +220,6 @@ export const updateNotifications = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
+		throw err;
 	}
 };

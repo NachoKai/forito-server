@@ -46,6 +46,7 @@ const connectDB = async () => {
 	} catch (err) {
 		console.error(err);
 		process.exit(1);
+		throw err;
 	}
 };
 
@@ -57,6 +58,7 @@ const closeDB = () => {
 		});
 	} catch (err) {
 		console.error(err);
+		throw err;
 	}
 };
 
@@ -70,6 +72,7 @@ const startServer = async () => {
 		server.on("close", closeDB);
 	} catch (err) {
 		console.error(err);
+		throw err;
 	}
 };
 
