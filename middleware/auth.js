@@ -9,7 +9,10 @@ const secret = process.env.SECRET;
 
 const auth = async (req, res, next) => {
 	try {
-		const token = req?.headers?.authorization.split(" ")[1];
+		const token = req?.headers?.authorization?.split(" ")[1];
+
+		if (!token) return res.status(401).json({ message: "Unauthorized" });
+
 		const isCustomAuth = token.length < 500;
 		let decodedData;
 
@@ -23,6 +26,7 @@ const auth = async (req, res, next) => {
 		next();
 	} catch (err) {
 		console.error(err);
+		throw err;
 	}
 };
 
