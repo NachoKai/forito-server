@@ -156,7 +156,7 @@ export const setEmail = async (req, res) => {
 export const getNotifications = async (req, res) => {
 	try {
 		const { id } = req.params;
-		const user = await User.findById(id).lean();
+		const user = await User.findById(id);
 
 		if (!mongoose.Types.ObjectId.isValid(id) || !user) {
 			return res.status(404).json({ message: "User doesn't exist." });
@@ -173,7 +173,7 @@ export const addNotification = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const { notification } = req.body;
-		const user = await User.findById(id).lean();
+		const user = await User.findById(id);
 
 		if (!mongoose.Types.ObjectId.isValid(id) || !user) {
 			return res.status(404).json({ message: "User doesn't exist." });
@@ -193,7 +193,7 @@ export const updateNotifications = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const { notifications } = req.body;
-		const user = await User.findById(id).lean();
+		const user = await User.findById(id);
 
 		if (!mongoose.Types.ObjectId.isValid(id) || !user) {
 			return res.status(404).json({ message: "User doesn't exist." });
