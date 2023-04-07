@@ -35,7 +35,6 @@ export const login = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: "Something went wrong." });
 		console.error(err);
-		throw err;
 	}
 };
 
@@ -66,7 +65,6 @@ export const signup = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: "Something went wrong." });
 		console.error(err);
-		throw err;
 	}
 };
 
@@ -83,7 +81,6 @@ export const getUser = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
-		throw err;
 	}
 };
 
@@ -91,6 +88,14 @@ export const setBirthday = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const { birthday } = req.body;
+
+		if (!birthday || !/^\d{4}\/\d{2}\/\d{2}$/.test(birthday)) {
+			return res.status(400).json({
+				message:
+					"Invalid birthday provided. Please provide a valid date in the format yyyy-mm-dd.",
+			});
+		}
+
 		const updatedUser = await User.findOneAndUpdate(
 			{ _id: { $eq: id } },
 			{ birthday },
@@ -105,7 +110,6 @@ export const setBirthday = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
-		throw err;
 	}
 };
 
@@ -113,11 +117,23 @@ export const setName = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const { firstName, lastName } = req.body;
-		const updatedUser = await User.findOneAndUpdate(
-			{ _id: { $eq: id } },
-			{ name: lastName ? `${firstName} ${lastName}` : firstName },
-			{ new: true }
-		);
+
+		if (!firstName || typeof firstName !== "string") {
+			return res.status(400).json({ message: "Invalid first name provided." });
+		}
+		if (lastName && typeof lastName !== "string") {
+			return res.status(400).json({ message: "Invalid last name provided." });
+		}
+
+		const updateObject = { name: firstName };
+
+		if (lastName) {
+			updateObject.name = `${firstName} ${lastName}`;
+		}
+
+		const updatedUser = await User.findOneAndUpdate({ _id: { $eq: id } }, updateObject, {
+			new: true,
+		});
 
 		if (!mongoose.Types.ObjectId.isValid(id) || !updatedUser) {
 			return res.status(404).json({ message: "User doesn't exist." });
@@ -127,7 +143,6 @@ export const setName = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
-		throw err;
 	}
 };
 
@@ -135,7 +150,7 @@ export const setEmail = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const { email } = req.body;
-		const existingUser = await User.findOne({ email: { $eq: email } }).lean();
+		const existingUser = await User.findOne({ email: { $eq: email.email } }).lean();
 
 		if (existingUser) {
 			return res.status(401).json({ message: "User already exists." });
@@ -143,7 +158,7 @@ export const setEmail = async (req, res) => {
 
 		const updatedUser = await User.findOneAndUpdate(
 			{ _id: { $eq: id } },
-			{ email },
+			{ email: email.email },
 			{ new: true }
 		);
 
@@ -155,7 +170,6 @@ export const setEmail = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
-		throw err;
 	}
 };
 
@@ -172,7 +186,6 @@ export const getNotifications = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
-		throw err;
 	}
 };
 
@@ -193,7 +206,6 @@ export const addNotification = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
-		throw err;
 	}
 };
 
@@ -220,6 +232,5 @@ export const updateNotifications = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ message: err?.message });
 		console.error(err);
-		throw err;
 	}
 };
