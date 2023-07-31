@@ -27,7 +27,7 @@
     "helmet": "^6.2.0",
     "jsonwebtoken": "^9.0.0",
     "mongo-sanitize": "^1.1.0",
-    "mongoose": "^6.11.4"
+    "mongoose": "^7.4.1"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.38.1",
