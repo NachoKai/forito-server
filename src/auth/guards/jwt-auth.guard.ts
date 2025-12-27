@@ -9,9 +9,22 @@ export class JwtAuthGuard extends AuthGuard("jwt") {
   }
 
   handleRequest(err: any, user: any, info: any) {
-    if (err || !user) {
-      throw err || new UnauthorizedException("Unauthorized");
+    // Log error details for debugging in production
+    if (err) {
+      console.error("JWT Auth Error:", err);
+      throw err;
     }
+
+    if (info) {
+      console.error("JWT Auth Info:", info.message || info);
+    }
+
+    if (!user) {
+      const errorMessage = info?.message || "Unauthorized - No user found";
+      console.error("JWT Auth Failed:", errorMessage);
+      throw new UnauthorizedException(errorMessage);
+    }
+
     return user;
   }
 }
