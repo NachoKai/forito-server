@@ -17,14 +17,9 @@ import { User, UserSchema } from "../users/schemas/user.schema";
       useFactory: async (configService: ConfigService) => {
         const secret = configService.get<string>("SECRET");
         if (!secret) {
-          throw new Error(
-            "JWT SECRET is not defined. Please set SECRET in your .env file"
-          );
+          throw new Error("JWT SECRET is not defined. Please set SECRET in your .env file");
         }
-        return {
-          secret,
-          signOptions: { expiresIn: "24h" },
-        };
+        return { secret, signOptions: { expiresIn: "24h" } };
       },
       inject: [ConfigService],
     }),
@@ -35,4 +30,3 @@ import { User, UserSchema } from "../users/schemas/user.schema";
   exports: [AuthService, JwtModule],
 })
 export class AuthModule {}
-

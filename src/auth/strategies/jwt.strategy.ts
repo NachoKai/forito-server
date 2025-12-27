@@ -8,9 +8,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private configService: ConfigService) {
     const secret = configService.get<string>("SECRET");
     if (!secret) {
-      throw new Error(
-        "JWT SECRET is not defined. Please set SECRET in your .env file"
-      );
+      throw new Error("JWT SECRET is not defined. Please set SECRET in your .env file");
     }
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -26,4 +24,3 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     return { userId: payload.id || payload.sub, email: payload.email };
   }
 }
-
