@@ -23,23 +23,37 @@ Go to the project directory
   cd forito-server
 ```
 
-Start the Server
+Install dependencies
 
-```bash
-  cd server
-```
 ```bash
   yarn install
 ```
+
+Copy the environment variables
+
 ```bash
-  yarn run dev
+  cp .env.example .env
 ```
 
-Runs the app in the development mode.  
-Open [http://localhost:5000](http://localhost:5000) to view it in the browser.  
-  
-The page will reload if you make edits.  
-You will also see any lint errors in the console. 
+Start the Server in development mode
+
+```bash
+  yarn start:dev
+```
+
+Or build and start in production mode
+
+```bash
+  yarn build
+  yarn start:prod
+```
+
+Runs the app in the development mode.
+Open [http://localhost:5000](http://localhost:5000) to view it in the browser.
+
+The page will reload if you make edits.
+You will also see any lint errors in the console.
+
 ## Running Tests
 
 To run tests, run the following command
@@ -48,19 +62,26 @@ To run tests, run the following command
   yarn test
 ```
 
+To run tests with coverage
+
+```bash
+  yarn test:cov
+```
 
 ## Environment Variables
 
 To run this project, you will need to add the following environment variables to your .env file
 
-`PORT`  
-`MONGODB_URI`  
-`SECRET`  
-`SALT`  
+`PORT` - Server port (default: 5000)
+`MONGODB_URI` - MongoDB connection string
+`SECRET` - JWT secret key
+`SALT` - Bcrypt salt rounds (default: 12)
+`THROTTLE_TTL` - Rate limit time window in seconds (default: 60)
+`THROTTLE_LIMIT` - Rate limit max requests per window (default: 100)
 
 ## Tech Stack
 
-Node, Express, MongoDB, Mongoose
+NestJS, TypeScript, MongoDB, Mongoose, JWT, Passport, Class Validator
 
 
 ## Feedback
@@ -70,7 +91,7 @@ If you have any feedback, please reach out to me at ignacio.caiafa@gmail.com
 
 ## Contributing
 
-Contributions are always welcome! [Project Kanban Board](https://github.com/NachoKai/forito/projects/1) 
+Contributions are always welcome! [Project Kanban Board](https://github.com/NachoKai/forito/projects/1)
 
 
 ## Authors
