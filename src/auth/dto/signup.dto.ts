@@ -22,4 +22,3 @@ export class SignupDto {
   @IsOptional()
   lastName?: string;
 }
-

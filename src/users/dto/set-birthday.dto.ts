@@ -7,4 +7,3 @@ export class SetBirthdayDto {
   })
   birthday: string;
 }
-

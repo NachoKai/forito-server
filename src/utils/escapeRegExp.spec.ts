@@ -18,4 +18,3 @@ describe("escapeRegExp", () => {
     expect(escapeRegExp("test}")).toBe("test\\}");
   });
 });
-

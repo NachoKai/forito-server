@@ -96,4 +96,3 @@ export class PostsController {
     return this.postsService.deleteComment(id, commentId);
   }
 }
-

@@ -43,4 +43,3 @@ export class CreatePostDto {
   @IsOptional()
   alt?: string;
 }
-

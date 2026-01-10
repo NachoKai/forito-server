@@ -9,7 +9,6 @@ export class JwtAuthGuard extends AuthGuard("jwt") {
   }
 
   handleRequest(err: any, user: any, info: any) {
-    // Log error details for debugging in production
     if (err) {
       console.error("JWT Auth Error:", err);
       throw err;
@@ -28,4 +27,3 @@ export class JwtAuthGuard extends AuthGuard("jwt") {
     return user;
   }
 }
-

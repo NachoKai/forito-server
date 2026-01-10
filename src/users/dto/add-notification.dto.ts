@@ -5,4 +5,3 @@ export class AddNotificationDto {
   @IsNotEmpty()
   notification: any;
 }
-

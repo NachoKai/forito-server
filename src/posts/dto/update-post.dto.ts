@@ -1,11 +1,4 @@
-import {
-  IsArray,
-  IsDateString,
-  IsNotEmpty,
-  IsObject,
-  IsOptional,
-  IsString,
-} from "class-validator";
+import { IsArray, IsDateString, IsNotEmpty, IsObject, IsOptional, IsString } from "class-validator";
 
 export class SelectedFileDto {
   @IsOptional()
@@ -70,4 +63,3 @@ export class UpdatePostDto {
   @IsNotEmpty()
   createdAt: string;
 }
-

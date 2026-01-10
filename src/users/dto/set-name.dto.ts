@@ -9,4 +9,3 @@ export class SetNameDto {
   @IsOptional()
   lastName?: string;
 }
-

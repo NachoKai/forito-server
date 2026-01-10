@@ -240,4 +240,3 @@ export class PostsService {
     return { data: posts, count: posts?.length };
   }
 }
-

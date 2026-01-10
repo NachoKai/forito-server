@@ -10,4 +10,3 @@ export class AddCommentDto {
     commentId?: string;
   };
 }
-

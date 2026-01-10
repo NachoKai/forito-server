@@ -5,4 +5,3 @@ export class UpdateNotificationsDto {
   @IsNotEmpty()
   notifications: any[];
 }
-

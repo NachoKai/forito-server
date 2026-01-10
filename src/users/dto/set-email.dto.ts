@@ -11,4 +11,3 @@ export class SetEmailDto {
   @IsNotEmpty()
   email: EmailObject;
 }
-
