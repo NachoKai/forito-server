@@ -8,6 +8,7 @@ import * as bcrypt from "bcryptjs";
 import { User, UserDocument } from "../users/schemas/user.schema";
 import { LoginDto } from "./dto/login.dto";
 import { SignupDto } from "./dto/signup.dto";
+import { UserResponseDto } from "./dto/user-response.dto";
 
 @Injectable()
 export class AuthService {
@@ -16,6 +17,18 @@ export class AuthService {
     private jwtService: JwtService,
     private configService: ConfigService
   ) {}
+
+  private toUserResponse(doc: UserDocument): UserResponseDto {
+    return {
+      _id: doc._id.toString(),
+      email: doc.email,
+      name: doc.name,
+      birthday: doc.birthday ? doc.birthday.toISOString().split("T")[0] : null,
+      notifications: doc.notifications || [],
+      createdAt: (doc as any).createdAt?.toString(),
+      updatedAt: (doc as any).updatedAt?.toString(),
+    };
+  }
 
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
@@ -38,7 +51,9 @@ export class AuthService {
       }
     );
 
-    return { result: existingUser, token };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, ...userWithoutPassword } = existingUser;
+    return { result: userWithoutPassword, token };
   }
 
   async signup(signupDto: SignupDto) {
@@ -71,6 +86,6 @@ export class AuthService {
       }
     );
 
-    return { result, token };
+    return { result: this.toUserResponse(result), token };
   }
 }

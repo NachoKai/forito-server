@@ -7,6 +7,7 @@ import { APP_GUARD } from "@nestjs/core";
 import { PostsModule } from "./posts/posts.module";
 import { UsersModule } from "./users/users.module";
 import { AuthModule } from "./auth/auth.module";
+import { HealthController } from "./common/health.controller";
 
 @Module({
   imports: [
@@ -26,7 +27,7 @@ import { AuthModule } from "./auth/auth.module";
       useFactory: (configService: ConfigService) => ({
         throttlers: [
           {
-            ttl: (configService.get<number>("THROTTLE_TTL") || 60) * 1000, // Convert to milliseconds
+            ttl: (configService.get<number>("THROTTLE_TTL") || 60) * 1000,
             limit: configService.get<number>("THROTTLE_LIMIT") || 100,
           },
         ],
@@ -37,6 +38,7 @@ import { AuthModule } from "./auth/auth.module";
     UsersModule,
     AuthModule,
   ],
+  controllers: [HealthController],
   providers: [
     {
       provide: APP_GUARD,

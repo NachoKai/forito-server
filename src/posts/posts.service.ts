@@ -28,24 +28,14 @@ export class PostsService {
   async getPosts(page: number) {
     const POSTS_LIMIT = 6;
     const startIndex = (Number(page) - 1) * POSTS_LIMIT;
-    const total = await this.postModel.countDocuments({});
-    const posts = await this.postModel
-      .find()
-      .sort({ _id: -1 })
-      .limit(POSTS_LIMIT)
-      .skip(startIndex)
-      .lean();
 
-    const privatePostsQuantity = posts?.filter((post) => post.privacy === "private")?.length;
-    const postsWithPrivate = await this.postModel
-      .find()
-      .sort({ _id: -1 })
-      .limit(POSTS_LIMIT + privatePostsQuantity)
-      .skip(startIndex)
-      .lean();
+    const [total, posts] = await Promise.all([
+      this.postModel.countDocuments({}),
+      this.postModel.find().sort({ _id: -1 }).limit(POSTS_LIMIT).skip(startIndex).lean(),
+    ]);
 
     return {
-      data: postsWithPrivate,
+      data: posts,
       currentPage: Number(page),
       numberOfPages: !isNaN(total) && total > 0 ? Math.ceil(total / POSTS_LIMIT) : 0,
       count: total,

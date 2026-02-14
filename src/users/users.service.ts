@@ -8,6 +8,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 
 import { User, UserDocument } from "./schemas/user.schema";
+import { UsersRepository } from "./repositories/users.repository";
 import { SetBirthdayDto } from "./dto/set-birthday.dto";
 import { SetNameDto } from "./dto/set-name.dto";
 import { SetEmailDto } from "./dto/set-email.dto";
@@ -16,14 +17,17 @@ import { UpdateNotificationsDto } from "./dto/update-notifications.dto";
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    private usersRepository: UsersRepository
+  ) {}
 
   async getUser(id: string) {
     if (!id.match(/^[0-9a-fA-F]{24}$/)) {
       throw new BadRequestException("Invalid user ID");
     }
 
-    const user = await this.userModel.findById(id).lean();
+    const user = await this.usersRepository.findById(id);
     if (!user) {
       throw new NotFoundException("User not found");
     }
@@ -44,9 +48,9 @@ export class UsersService {
       throw new BadRequestException("Invalid user ID");
     }
 
-    const updatedUser = await this.userModel
-      .findOneAndUpdate({ _id: { $eq: id } }, { birthday }, { new: true })
-      .lean();
+    const updatedUser = await this.usersRepository.findByIdAndUpdate(id, {
+      birthday: new Date(birthday),
+    });
 
     if (!updatedUser) {
       throw new NotFoundException("User doesn't exist.");
@@ -76,9 +80,7 @@ export class UsersService {
       throw new BadRequestException("Invalid user ID");
     }
 
-    const updatedUser = await this.userModel
-      .findOneAndUpdate({ _id: { $eq: id } }, updateObject, { new: true })
-      .lean();
+    const updatedUser = await this.usersRepository.findByIdAndUpdate(id, updateObject);
 
     if (!updatedUser) {
       throw new NotFoundException("User doesn't exist.");
@@ -89,7 +91,7 @@ export class UsersService {
 
   async setEmail(id: string, setEmailDto: SetEmailDto) {
     const { email } = setEmailDto;
-    const existingUser = await this.userModel.findOne({ email: { $eq: email.email } }).lean();
+    const existingUser = await this.usersRepository.findByEmail(email.email);
 
     if (existingUser) {
       throw new ConflictException("User already exists.");
@@ -99,9 +101,7 @@ export class UsersService {
       throw new BadRequestException("Invalid user ID");
     }
 
-    const updatedUser = await this.userModel
-      .findOneAndUpdate({ _id: { $eq: id } }, { email: email.email }, { new: true })
-      .lean();
+    const updatedUser = await this.usersRepository.findByIdAndUpdate(id, { email: email.email });
 
     if (!updatedUser) {
       throw new NotFoundException("User doesn't exist.");
@@ -115,7 +115,7 @@ export class UsersService {
       throw new BadRequestException("Invalid user ID");
     }
 
-    const user = await this.userModel.findById(id);
+    const user = await this.usersRepository.findById(id);
 
     if (!user) {
       throw new NotFoundException("User doesn't exist.");
@@ -129,14 +129,14 @@ export class UsersService {
       throw new BadRequestException("Invalid user ID");
     }
 
-    const user = await this.userModel.findById(id);
+    const user = await this.usersRepository.findById(id);
 
     if (!user) {
       throw new NotFoundException("User doesn't exist.");
     }
 
     user.notifications.push(addNotificationDto.notification);
-    const updatedUser = await user.save();
+    const updatedUser = await this.userModel.findByIdAndUpdate(id, user, { new: true }).lean();
 
     return updatedUser;
   }
@@ -146,7 +146,7 @@ export class UsersService {
       throw new BadRequestException("Invalid user ID");
     }
 
-    const user = await this.userModel.findById(id);
+    const user = await this.usersRepository.findById(id);
 
     if (!user) {
       throw new NotFoundException("User doesn't exist.");
@@ -160,7 +160,7 @@ export class UsersService {
     });
 
     user.notifications = updatedNotifications;
-    const updatedUser = await user.save();
+    const updatedUser = await this.userModel.findByIdAndUpdate(id, user, { new: true }).lean();
 
     return updatedUser;
   }
