@@ -13,22 +13,22 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
   const port = configService.get<number>("PORT") || 5000;
+  const isProduction = configService.get<string>("NODE_ENV") === "production";
 
-  // Security middleware
-  app.use(helmet());
-  app.use(compression());
+  if (!isProduction) {
+    app.use(helmet());
+    app.use(compression());
+  }
 
-  // CORS - Configure to allow Authorization header
   const corsOrigin = configService.get<string>("CORS_ORIGIN");
   app.enableCors({
-    origin: corsOrigin || true, // Use CORS_ORIGIN env var or allow all origins
+    origin: corsOrigin || true,
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     exposedHeaders: ["Authorization"],
   });
 
-  // Global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -38,9 +38,12 @@ async function bootstrap() {
   );
 
   app.useGlobalFilters(new AllExceptionsFilter());
-  app.useGlobalInterceptors(new LoggingInterceptor(), new SuccessInterceptor());
+  app.useGlobalInterceptors(new SuccessInterceptor());
 
-  // Global prefix
+  if (!isProduction) {
+    app.useGlobalInterceptors(new LoggingInterceptor());
+  }
+
   app.setGlobalPrefix("api");
 
   await app.listen(port);

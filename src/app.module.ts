@@ -19,6 +19,9 @@ import { HealthController } from "./common/health.controller";
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         uri: configService.get<string>("MONGODB_URI") || "mongodb://localhost:27017/forito",
+        maxPoolSize: 5,
+        serverSelectionTimeoutMS: 5000,
+        socketTimeoutMS: 45000,
       }),
       inject: [ConfigService],
     }),
